@@ -1,228 +1,29 @@
-class Vertex {
-  constructor(name) {
-    this.name = name;
-    this.adjacencies = [];
-    this.minDistance = Infinity;
-    this.previous = null;
-  }
+const Vertex = require("./vertex");
+const Edge = require("./Edge");
+const Dijkstra = require("./Dijkstra2").default;
+const { computePaths, getShortestPathTo } = require("./Dijkstra2");
 
-  toString() {
-    return this.name;
-  }
-
-  compareTo(other) {
-    return this.minDistance - other.minDistance;
-  }
+class Main {
+  //   static run() {
+  //     const main = new Main();
+  //     main.createVertices();
+  //     main.connectGroups();
+  //     main.calculatePaths();
+  //     main.printPaths();
+  //   }
+  //   createVertices() {
+  //     // Your code for creating vertices
+  //   }
+  //   connectGroups() {
+  //     // Your code for connecting groups
+  //   }
+  //   calculatePaths() {
+  //     // Your code for calculating paths
+  //   }
+  //   printPaths() {
+  //     // Your code for printing paths
+  //   }
 }
-
-class Edge {
-  constructor(target, weight, name) {
-    this.target = target;
-    this.weight = weight;
-    this.name = name;
-  }
-  toString() {
-    return this.name;
-  }
-}
-
-class Dijkstra {
-  constructor() {}
-  computePaths(source) {
-    source.minDistance = 0;
-    const vertexQueue = new PriorityQueue();
-    vertexQueue.enqueue(source);
-
-    while (!vertexQueue.isEmpty()) {
-      const u = vertexQueue.dequeue();
-
-      for (const edge of u.adjacencies) {
-        const v = edge.target;
-        const weight = edge.weight;
-        const distanceThroughU = u.minDistance + weight;
-
-        if (distanceThroughU < v.minDistance) {
-          vertexQueue.remove(v);
-          v.minDistance = distanceThroughU;
-          v.previous = u;
-          vertexQueue.enqueue(v);
-        }
-      }
-    }
-  }
-
-  getShortestPathTo(target) {
-    const path = [];
-    let vertex = target;
-
-    while (vertex !== null) {
-      path.unshift(vertex);
-      vertex = vertex.previous;
-    }
-
-    return path;
-  }
-}
-
-// Assuming you have a PriorityQueue implementation
-class PriorityQueue {
-  constructor() {
-    this.items = [];
-  }
-
-  enqueue(item) {
-    this.items.push(item);
-    this.items.sort((a, b) => a.compareTo(b));
-  }
-
-  dequeue() {
-    return this.items.shift();
-  }
-
-  remove(item) {
-    const index = this.items.indexOf(item);
-    if (index !== -1) {
-      this.items.splice(index, 1);
-    }
-  }
-
-  isEmpty() {
-    return this.items.length === 0;
-  }
-}
-
-// Main function
-// function main() {
-//   // Create vertices
-//   // const A = new Vertex("A");
-//   // const B = new Vertex("B");
-//   // const D = new Vertex("D");
-//   // const F = new Vertex("F");
-//   // const K = new Vertex("K");
-//   // const J = new Vertex("J");
-//   // const M = new Vertex("M");
-//   // const O = new Vertex("O");
-//   // const P = new Vertex("P");
-//   // const R = new Vertex("R");
-//   // const Z = new Vertex("Z");
-//   // Nodes from A1 to E5
-//   const A1 = new Vertex("A1");
-//   const B1 = new Vertex("B1");
-//   const C1 = new Vertex("C1");
-//   const D1 = new Vertex("D1");
-//   const E1 = new Vertex("E1");
-
-//   const A2 = new Vertex("A2");
-//   const B2 = new Vertex("B2");
-//   const C2 = new Vertex("C2");
-//   const D2 = new Vertex("D2");
-//   const E2 = new Vertex("E2");
-
-//   const A3 = new Vertex("A3");
-//   const B3 = new Vertex("B3");
-//   const C3 = new Vertex("C3");
-//   const D3 = new Vertex("D3");
-//   const E3 = new Vertex("E3");
-
-//   const A4 = new Vertex("A4");
-//   const B4 = new Vertex("B4");
-//   const C4 = new Vertex("C4");
-//   const D4 = new Vertex("D4");
-//   const E4 = new Vertex("E4");
-
-//   const A5 = new Vertex("A5");
-//   const B5 = new Vertex("B5");
-//   const C5 = new Vertex("C5");
-//   const D5 = new Vertex("D5");
-//   const E5 = new Vertex("E5");
-
-//   // Nodes from A_L to E_L
-//   const A_L = new Vertex("A_L");
-//   const B_L = new Vertex("B_L");
-//   const C_L = new Vertex("C_L");
-//   const D_L = new Vertex("D_L");
-//   const E_L = new Vertex("E_L");
-
-//   // Nodes from A_F to E_F
-//   const A_F = new Vertex("A_F");
-//   const B_F = new Vertex("B_F");
-//   const C_F = new Vertex("C_F");
-//   const D_F = new Vertex("D_F");
-//   const E_F = new Vertex("E_F");
-
-//   const edge_A_F_A1 = new Edge(A1, 8);
-//   A_F.adjacencies.push(edge_A_F_A1);
-//   const edge_A1_A_F = new Edge(A_F, 8);
-//   A1.adjacencies.push(edge_A1_A_F);
-
-//   // Define the nodes array for A1 to E5
-//   const nodes = [
-//     A1,
-//     A2,
-//     A3,
-//     A4,
-//     A5,
-//     B1,
-//     B2,
-//     B3,
-//     B4,
-//     B5,
-//     C1,
-//     C2,
-//     C3,
-//     C4,
-//     C5,
-//     D1,
-//     D2,
-//     D3,
-//     D4,
-//     D5,
-//     E1,
-//     E2,
-//     E3,
-//     E4,
-//     E5,
-//   ];
-
-//   // Connect nodes in sequence
-//   for (let i = 0; i < nodes.length - 1; i++) {
-//     const current = nodes[i];
-//     const next = nodes[i + 1];
-
-//     // Create edges between current and next nodes
-//     const edge_current_next = new Edge(next, 8);
-//     current.adjacencies.push(edge_current_next);
-//     console.log(edge_current_next);
-
-//     // Create edges between next and current nodes
-//     const edge_next_current = new Edge(current, 8);
-//     next.adjacencies.push(edge_next_current);
-//     console.log(edge_next_current);
-//   }
-
-//   // Set edges and weights
-//   // A.adjacencies.push(new Edge(M, 8));
-//   // B.adjacencies.push(new Edge(D, 11));
-//   // D.adjacencies.push(new Edge(B, 11));
-//   // F.adjacencies.push(new Edge(K, 23));
-//   // K.adjacencies.push(new Edge(O, 40));
-//   // J.adjacencies.push(new Edge(K, 25));
-//   // M.adjacencies.push(new Edge(R, 8));
-//   // O.adjacencies.push(new Edge(K, 40));
-//   // P.adjacencies.push(new Edge(Z, 18));
-//   // R.adjacencies.push(new Edge(P, 15));
-//   // Z.adjacencies.push(new Edge(P, 18));
-
-//   // Dijkstra.computePaths(R);
-
-//   // console.log(`Distance to ${Z}: ${Z.minDistance}`);
-//   // const path = Dijkstra.getShortestPathTo(Z);
-//   // console.log("Path:", path.map((vertex) => vertex.toString()).join(" -> "));
-// }
-// Main function
-// Main function
-// Main function
-// Main function
 function main() {
   // Create vertices for each group
   const groupA = [];
@@ -385,19 +186,7 @@ function main() {
   const pathToGroupB2 = dijkstra.getShortestPathTo(groupB[2]);
   console.log("Path from start to groupB[2]:");
   console.log(pathToGroupB2.map((vertex) => vertex.toString()).join(" -> "));
-  resetGraph(
-    [groupA, groupB, groupC, groupD, groupE, groupFirst, groupLast],
-    start,
-    end
-  );
-
-  // Reset start vertex
-  start.minDistance = Infinity;
-  start.previous = null;
-
-  // Reset end vertex
-  end.minDistance = Infinity;
-  end.previous = null;
+  // Create a new instance of Dijkstra's algorithm
   const dijkstra2 = new Dijkstra();
   // Find the shortest path from groupB[2] to groupD[4]
   dijkstra2.computePaths(groupB[2]);
@@ -408,10 +197,10 @@ function main() {
 //Added some fucntions to make it easy:
 function findShortestPath(startNode, endNode) {
   // Compute paths from the start node to every other vertex
-  Dijkstra.computePaths(startNode);
+  computePaths(startNode);
 
   // Find the shortest path to the end node
-  const shortestPath = Dijkstra.getShortestPathTo(endNode);
+  const shortestPath = getShortestPathTo(endNode);
 
   return shortestPath;
 }
@@ -433,29 +222,6 @@ function computeOverallPath(startNode, nodesToVisit, endNode) {
   overallPath.push(endNode);
 
   return overallPath;
-}
-function resetVertices(vertices) {
-  // Iterate over each vertex in the array
-  for (const vertex of vertices) {
-    // Reset minDistance to a large value
-    vertex.minDistance = Infinity;
-    // Reset previous to null
-    vertex.previous = null;
-  }
-}
-function resetGraph(groups, startVertex, endVertex) {
-  // Iterate over each group and reset vertices
-  for (const group of groups) {
-    resetVertices(group);
-  }
-
-  // Reset start vertex
-  startVertex.minDistance = Infinity;
-  startVertex.previous = null;
-
-  // Reset end vertex
-  endVertex.minDistance = Infinity;
-  endVertex.previous = null;
 }
 
 // Function to connect nodes within a group
