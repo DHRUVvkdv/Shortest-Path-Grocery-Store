@@ -339,13 +339,82 @@ function main() {
   // const path = Dijkstra.getShortestPathTo(groupA[4]);
   // console.log("Path:", path.map((vertex) => vertex.toString()).join(" -> "));
   //try 1:
-  //   const nodesToVisit = [groupB[2], groupD[4]];
-  //   const overallPath = computeOverallPath(start, nodesToVisit, end);
+  //   const nodesToVisit = [groupB[2], groupD[4], end];
+  //   const nodesToVisit = [groupB[4], end];
+
+  const itemToVertex = {
+    cookies: groupB[2],
+    cake: groupB[3],
+    juice: groupD[2],
+    milk: groupD[4],
+  };
+
+  // Assume user preferences are stored in an array called userPreferences
+  const readline = require("readline");
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  rl.question(
+    "Enter your preferences (separate items with a space, e.g., cookies milk): ",
+    (input) => {
+      const userPreferences = input.trim().split(" ");
+
+      const itemToVertex = {
+        cookies: groupB[2],
+        milk: groupD[4],
+      };
+
+      const nodesToVisit = userPreferences.map((item) => itemToVertex[item]);
+      nodesToVisit.push(end);
+
+      const overallPath = computeOverallPath(start, nodesToVisit, end, [
+        groupA,
+        groupB,
+        groupC,
+        groupD,
+        groupE,
+        groupFirst,
+        groupLast,
+      ]);
+
+      console.log(
+        "Overall path taken:",
+        overallPath
+          .slice(0, -1) // Exclude the last element
+          .map((vertex) => vertex.toString())
+          .join(" -> ")
+      );
+
+      rl.close(); // Close the interface inside the callback
+    }
+  );
+  //   const userPreferences = ["cookies", "milk"];
+
+  //   // Set nodesToVisit based on user preferences
+  //   const nodesToVisit = userPreferences.map((item) => itemToVertex[item]);
+  //   // Add end vertex
+  //   nodesToVisit.push(end);
+  //   const overallPath = computeOverallPath(start, nodesToVisit, end, [
+  //     groupA,
+  //     groupB,
+  //     groupC,
+  //     groupD,
+  //     groupE,
+  //     groupFirst,
+  //     groupLast,
+  //   ]);
 
   //   console.log(
   //     "Overall path taken:",
-  //     overallPath.map((vertex) => vertex.toString()).join(" -> ")
+  //     overallPath
+  //       .slice(0, -1) // Exclude the last element
+  //       .map((vertex) => vertex.toString())
+  //       .join(" -> ")
   //   );
+
   //Try 2:
   // const nodesToVisit = [start, groupB[2], groupD[4], end];
   // for (let i = 0; i < nodesToVisit.length; i++) {
@@ -380,44 +449,46 @@ function main() {
   //   const path = Dijkstra.getShortestPathTo(groupD[4]);
   //   console.log("Path:", path.map((vertex) => vertex.toString()).join(" -> "));
   //Try 5:
-  const dijkstra = new Dijkstra();
-  dijkstra.computePaths(start);
-  const pathToGroupB2 = dijkstra.getShortestPathTo(groupB[2]);
-  console.log("Path from start to groupB[2]:");
-  console.log(pathToGroupB2.map((vertex) => vertex.toString()).join(" -> "));
-  resetGraph(
-    [groupA, groupB, groupC, groupD, groupE, groupFirst, groupLast],
-    start,
-    end
-  );
 
-  // Reset start vertex
-  start.minDistance = Infinity;
-  start.previous = null;
+  //   // Reset start vertex
+  //   start.minDistance = Infinity;
+  //   start.previous = null;
 
-  // Reset end vertex
-  end.minDistance = Infinity;
-  end.previous = null;
-  const dijkstra2 = new Dijkstra();
-  // Find the shortest path from groupB[2] to groupD[4]
-  dijkstra2.computePaths(groupB[2]);
-  const pathToGroupD4 = dijkstra2.getShortestPathTo(groupD[4]);
-  console.log("Path from groupB[2] to groupD[4]:");
-  console.log(pathToGroupD4.map((vertex) => vertex.toString()).join(" -> "));
+  //   // Reset end vertex
+  //   end.minDistance = Infinity;
+  //   end.previous = null;
+  //WORKSSSSS
+  //   const dijkstra = new Dijkstra();
+  //   dijkstra.computePaths(start);
+  //   const pathToGroupB2 = dijkstra.getShortestPathTo(groupB[2]);
+  //   console.log("Path from start to groupB[2]:");
+  //   console.log(pathToGroupB2.map((vertex) => vertex.toString()).join(" -> "));
+  //   resetGraph(
+  //     [groupA, groupB, groupC, groupD, groupE, groupFirst, groupLast],
+  //     start,
+  //     end
+  //   );
+  //   const dijkstra2 = new Dijkstra();
+  //   // Find the shortest path from groupB[2] to groupD[4]
+  //   dijkstra2.computePaths(groupB[2]);
+  //   const pathToGroupD4 = dijkstra2.getShortestPathTo(groupD[4]);
+  //   console.log("Path from groupB[2] to groupD[4]:");
+  //   console.log(pathToGroupD4.map((vertex) => vertex.toString()).join(" -> "));
 }
 //Added some fucntions to make it easy:
-function findShortestPath(startNode, endNode) {
+function findShortestPath(startNode, endNode, graph, startA, endF) {
   // Compute paths from the start node to every other vertex
-  Dijkstra.computePaths(startNode);
+  const dijkstra = new Dijkstra();
+  dijkstra.computePaths(startNode);
 
   // Find the shortest path to the end node
-  const shortestPath = Dijkstra.getShortestPathTo(endNode);
-
+  const shortestPath = dijkstra.getShortestPathTo(endNode);
+  resetGraph(graph, startA, endF);
   return shortestPath;
 }
 
 // Define a function to compute the overall path given a sequence of nodes to visit
-function computeOverallPath(startNode, nodesToVisit, endNode) {
+function computeOverallPath(startNode, nodesToVisit, endNode, graph) {
   let overallPath = [];
 
   // Compute paths from the start node to each node in the sequence
@@ -425,13 +496,19 @@ function computeOverallPath(startNode, nodesToVisit, endNode) {
     const currentNode = i === 0 ? startNode : nodesToVisit[i - 1];
     const nextNode = nodesToVisit[i];
 
-    const pathToNextNode = findShortestPath(currentNode, nextNode);
+    const pathToNextNode = findShortestPath(
+      currentNode,
+      nextNode,
+      graph,
+      startNode,
+      endNode
+    );
     overallPath = overallPath.concat(pathToNextNode.slice(1)); // Exclude the current node
   }
 
   // Add the end node to the overall path
   overallPath.push(endNode);
-
+  resetGraph(graph, startNode, endNode);
   return overallPath;
 }
 function resetVertices(vertices) {
@@ -471,7 +548,8 @@ function connectNodesInGroup(group) {
       `Edge_${current.name}_${next.name}`
     );
     current.adjacencies.push(edge_current_next);
-    console.log(edge_current_next.toString());
+    //Used for Debugging, removing now
+    // console.log(edge_current_next.toString());
 
     // Create edge between next and current node
     const edge_next_current = new Edge(
@@ -480,7 +558,8 @@ function connectNodesInGroup(group) {
       `Edge_${next.name}_${current.name}`
     );
     next.adjacencies.push(edge_next_current);
-    console.log(edge_next_current.toString());
+    // Used for Debugging, removing now
+    // console.log(edge_next_current.toString());
   }
 }
 
