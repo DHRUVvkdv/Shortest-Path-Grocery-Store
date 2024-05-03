@@ -268,10 +268,10 @@ function main() {
       // Log the overall path taken, excluding the end vertex
       console.log(
         "Overall path taken:",
-        overallPath
-          .slice(0, -1) // Exclude the last element (end vertex)
-          .map((vertex) => vertex.toString()) // Convert vertices to strings
-          .join(" -> ") // Join vertices with " -> " separator
+        [
+          start.toString(),
+          ...overallPath.slice(0, -1).map((vertex) => vertex.toString()),
+        ].join(" -> ")
       );
 
       rl.close(); // Close the readline interface
